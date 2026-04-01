@@ -1,0 +1,40 @@
+services:
+  nest-api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - OLLAMA_HOST=http://ollama-service:11434
+    depends_on:
+      - ollama-service
+
+  ollama-service:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama_storage:/root/.ollama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  
+  db-service:
+    image: postgres:18-alpine3.23
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=chat_ia
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  ollama_storage:
+  db_storage:
