@@ -7,6 +7,9 @@ services:
       - OLLAMA_HOST=http://ollama-service:11434
     depends_on:
       - ollama-service
+    volumes:
+    - .:/usr/src/app
+    - /usr/src/app/node_modules
 
   ollama-service:
     image: ollama/ollama:latest
