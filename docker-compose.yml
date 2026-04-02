@@ -16,8 +16,20 @@ services:
     container_name: ollama
     volumes:
       - ollama_storage:/root/.ollama
+    entrypoint: 
+      - /bin/bash
+      - -c
+      - |
+        ollama serve &
+        echo "Iniciando servidor..."
+        until curl -s localhost:11434 > /dev/null; do sleep 1; done
+        echo "Servidor listo. Descargando modelo..."
+        ollama pull $$MODEL_NAME
+        wait
     ports:
       - "11434:11434"
+    environment:
+      - MODEL_NAME=danielsheep/Qwen3-Coder-30B-A3B-Instruct-1M-Unsloth:UD-IQ3_XXS
     deploy:
       resources:
         reservations:
@@ -36,7 +48,7 @@ services:
     volumes:
       - db_storage:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
 volumes:
   ollama_storage:
