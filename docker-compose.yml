@@ -12,7 +12,7 @@ services:
     - /usr/src/app/node_modules
 
   ollama-service:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.20.2-rocm
     container_name: ollama
     volumes:
       - ollama_storage:/root/.ollama
@@ -22,7 +22,9 @@ services:
       - |
         ollama serve &
         echo "Iniciando servidor..."
-        until curl -s localhost:11434 > /dev/null; do sleep 1; done
+        until (echo > /dev/tcp/localhost/11434) >/dev/null 2>&1; do 
+          sleep 1
+        done
         echo "Servidor listo. Descargando modelo..."
         ollama pull $$MODEL_NAME
         wait
