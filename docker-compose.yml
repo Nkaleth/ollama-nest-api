@@ -2,7 +2,7 @@ services:
   nest-api:
     build: .
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - OLLAMA_HOST=http://ollama-service:11434
     depends_on:
